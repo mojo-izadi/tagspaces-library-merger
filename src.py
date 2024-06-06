@@ -22,23 +22,16 @@ def getJsons():
 jsons = getJsons()
 tag_arrays = [j["tagGroups"] for j in jsons]
 
-i = -1
 for tag in tag_arrays[0]:
-    i += 1
     title = tag["title"]
     child_tags = tag["children"]
     for tag2 in tag_arrays[1]:
         if tag2["title"] == title:
             for child_tag2 in tag2["children"]:
                 if child_tag2 not in child_tags:
-                    print(title)
-                    print(child_tag2)
                     child_tags.append(child_tag2)
             break
         if tag2['title'] not in [tagIter["title"] for tagIter in tag_arrays[0]]:
             tag_arrays[0].append(tag2)
-
-
-# jsons[0]['tagGroups'] = tag_arrays[0]
 
 writeFinalJson(jsons[0])
