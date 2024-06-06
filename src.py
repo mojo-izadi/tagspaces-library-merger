@@ -1,22 +1,26 @@
 import json
 import os
 
-json_files = []
-for f in os.listdir(os.getcwd()):
-    if f.endswith('.json'):
-        json_files.append(f)
+def writeFinalJson(json):
+    with open('my_file.txt', "w", encoding='utf-8') as f:
+        f.writelines(str(json).replace('\'', '\"').replace(" True", " true"))
+    os.rename("my_file.txt", "merged_library.json")
 
-jsons = []
-with open(json_files[0], encoding="utf-8") as f:
-    jsons.append(json.load(f))
+def getJsons():
+    json_files = []
+    for f in os.listdir(os.getcwd()):
+        if f.endswith('.json'):
+            json_files.append(f)
 
-with open(json_files[1], encoding="utf-8") as f:
-    jsons.append(json.load(f))
+    jsons = []
+    for i in range(2):
+        with open(json_files[i], encoding="utf-8") as f:
+            jsons.append(json.load(f))
+    
+    return jsons
 
+jsons = getJsons()
 tag_arrays = [j["tagGroups"] for j in jsons]
-
-# for elem in jsons[0]["tagGroups"]:
-#     print(elem)
 
 i = -1
 for tag in tag_arrays[0]:
@@ -30,7 +34,11 @@ for tag in tag_arrays[0]:
                     print(title)
                     print(child_tag2)
                     child_tags.append(child_tag2)
-            tag_arrays[0][i]["children"] = child_tags
             break
+        if tag2['title'] not in [tagIter["title"] for tagIter in tag_arrays[0]]:
+            tag_arrays[0].append(tag2)
 
-print(tag_arrays[0])
+
+# jsons[0]['tagGroups'] = tag_arrays[0]
+
+writeFinalJson(jsons[0])
